@@ -6,10 +6,64 @@ This week's mini project was aimed at creating a Streamlit app that uses a Huggi
 ## Steps
 
 ### 1. Create a Streamlit App
-The Streamlit app was extremely easy to create and I did so by converting my previous flask app into a Streamlit app. The app was created in a file called [`app.py`]().
+The Streamlit app was extremely easy to create and I did so by converting my previous flask app into a Streamlit app. The app was created in a file called [`app.py`](https://github.com/AaryaDesai1/Streamlit_HuggingFace/blob/main/app.py).
+
+**Contents of the app.py file:**
+The app.py file comprises of 3 main sections:
+**i. Importing the necessary libraries and setting up Hugging Face model:** The first section of the app.py file imports the necessary libraries, including Streamlit, Transformers, and TensorFlow. It also loads the Hugging Face model (GPT-2) using the TFAutoModelForCausalLM class from the Transformers library.
+```python
+import streamlit as st
+from transformers import pipeline, set_seed
+
+# Set up the text generation pipeline with GPT-2 model
+text_generator = pipeline("text-generation")
+set_seed(42)
+```
+
+**ii. Function for generating text:** For my app, I wanted users to be able to input their personal traits and have the model generate potential career choices for them as a response based on those traits. I created a function called generate_professions that takes the user input as an argument and generates text using the Hugging Face model.
+```python
+def generate_professions(input_traits):
+    # Construct the prompt sentence
+    prompt = f"The best professions for someone with the following traits and/or skills {input_traits} are:"
+
+    # Generate text using GPT-2 based on the constructed prompt
+    generated_texts = text_generator(
+        prompt,
+        max_length=50,
+        num_return_sequences=3,
+        temperature=0.7,
+        top_k=50,
+        top_p=0.95,
+    )
+
+    # Extract the generated texts excluding the original prompt
+    generated_professions = [
+        generated_text["generated_text"].replace(prompt, "")
+        for generated_text in generated_texts
+    ]
+
+    return generated_professions
+```
+As you can see I have set certain parameters for the model to generate the text. The max_length is set to 50, which means the maximum number of tokens in the generated text is 50. The num_return_sequences is set to 3, which means the model will generate 3 different sequences of text. The temperature is set to 0.7, which controls the randomness of the generated text. The top_k and top_p parameters are used to filter the tokens during text generation.
+
+**iii. Main function for Streamlit app:** The main function of the Streamlit app is where the user interface is defined. The user interface includes a text input field for users to enter their personal traits, a button to generate career choices based on the input traits, and a section to display the generated career choices. The main function also calls the generate_professions function to generate career choices based on the user input.
+```python
+def main():
+    st.title("Professions Generator")
+
+    input_traits = st.text_input("Enter traits and/or skills:")
+    if st.button("Generate"):
+        generated_professions = generate_professions(input_traits)
+        st.markdown("### Generated Professions:")
+        for profession in generated_professions:
+            st.write(profession)
+
+if __name__ == "__main__":
+    main()
+```
 
 ### 2. Create a Dockerfile
-The Dockerfile was created to containerize the Streamlit app. The Dockerfile was created in a file called [`Dockerfile`]().
+The Dockerfile was created to containerize the Streamlit app. The Dockerfile was created in a file called [`Dockerfile`](https://github.com/AaryaDesai1/Streamlit_HuggingFace/blob/main/Dockerfile).
 **Contents of the Dockerfile:**
 The Dockerfile comprises of 8 steps:
 i. FROM python:3.10: Specifies the base image to use for the Docker container, which is an official Python 3.10 image.
