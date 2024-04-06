@@ -1,5 +1,7 @@
 # Streamlit_HuggingFace
 
+[![CI/CD Pipeline](https://github.com/AaryaDesai1/Streamlit_HuggingFace/actions/workflows/actions.yml/badge.svg)](https://github.com/AaryaDesai1/Streamlit_HuggingFace/actions/workflows/actions.yml)
+
 ## Objective
 This week's mini project was aimed at creating a Streamlit app that uses a Hugging Face model to generate text. The app was containerized and deployed using Docker.
 
